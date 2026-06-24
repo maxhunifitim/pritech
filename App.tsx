@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 import {
   StyleSheet,
   View,
@@ -6,28 +6,28 @@ import {
   StatusBar as RNStatusBar,
   Animated,
   Dimensions,
-  Alert,
-} from 'react-native';
-import { StatusBar } from 'expo-status-bar';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+} from "react-native";
+import { Alert } from "./src/utils/alert";
+import { StatusBar } from "expo-status-bar";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { Task, FilterType, ScreenType } from './types';
-import { Theme } from './theme';
+import { Task, FilterType, ScreenType } from "./types";
+import { Theme } from "./theme";
 
-import TaskListScreen from './src/screens/TaskListScreen';
-import TaskDetailsScreen from './src/screens/TaskDetailsScreen';
-import AddEditTaskScreen from './src/screens/AddEditTaskScreen';
-import SettingsScreen from './src/screens/SettingsScreen';
+import TaskListScreen from "./src/screens/TaskListScreen";
+import TaskDetailsScreen from "./src/screens/TaskDetailsScreen";
+import AddEditTaskScreen from "./src/screens/AddEditTaskScreen";
+import SettingsScreen from "./src/screens/SettingsScreen";
 
-const STORAGE_KEY = '@pritech_tasks';
-const { width } = Dimensions.get('window');
+const STORAGE_KEY = "@pritech_tasks";
+const { width } = Dimensions.get("window");
 
 export default function App() {
   // Application State
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeFilter, setActiveFilter] = useState<FilterType>('all');
-  const [currentScreen, setCurrentScreen] = useState<ScreenType>('list');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeFilter, setActiveFilter] = useState<FilterType>("all");
+  const [currentScreen, setCurrentScreen] = useState<ScreenType>("list");
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -44,7 +44,7 @@ export default function App() {
     try {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newTasks));
     } catch (e) {
-      console.error('Failed to save tasks to storage', e);
+      console.error("Failed to save tasks to storage", e);
     }
   };
 
@@ -57,27 +57,29 @@ export default function App() {
         // Seed default local tasks if empty
         const defaultTasks: Task[] = [
           {
-            id: '1',
-            title: 'Welcome to Pritech Task Manager!',
-            description: 'This is a local task. You can complete it, edit it, or delete it.',
+            id: "1",
+            title: "Welcome to Pritech Task Manager!",
+            description:
+              "This is a local task. You can complete it, edit it, or delete it.",
             completed: false,
             createdAt: new Date().toISOString(),
-            source: 'local',
+            source: "local",
           },
           {
-            id: '2',
-            title: 'Fetch some API tasks',
-            description: 'Press the cloud download button on the top right of the list or go to settings to seed tasks from JSONPlaceholder API.',
+            id: "2",
+            title: "Fetch some API tasks",
+            description:
+              "Press the cloud download button on the top right of the list or go to settings to seed tasks from JSONPlaceholder API.",
             completed: false,
             createdAt: new Date().toISOString(),
-            source: 'local',
-          }
+            source: "local",
+          },
         ];
         setTasks(defaultTasks);
         await saveTasks(defaultTasks);
       }
     } catch (e) {
-      console.error('Failed to load tasks from storage', e);
+      console.error("Failed to load tasks from storage", e);
     }
   };
 
@@ -85,23 +87,25 @@ export default function App() {
   const fetchTasksFromAPI = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('https://jsonplaceholder.typicode.com/todos?_limit=10');
+      const response = await fetch(
+        "https://jsonplaceholder.typicode.com/todos?_limit=10",
+      );
       const data = await response.json();
-      
+
       const apiTasks: Task[] = data.map((todo: any) => ({
         id: `api-${todo.id}-${Date.now()}`, // Make it unique
         title: todo.title,
-        description: 'Fetched from JSONPlaceholder API',
+        description: "Fetched from JSONPlaceholder API",
         completed: todo.completed,
         createdAt: new Date().toISOString(),
-        source: 'api',
+        source: "api",
       }));
 
       // Merge with existing tasks, avoiding exact duplicates by title
       const updatedTasks = [...tasks];
       apiTasks.forEach((apiTask) => {
         const titleExists = updatedTasks.some(
-          (t) => t.title.toLowerCase() === apiTask.title.toLowerCase()
+          (t) => t.title.toLowerCase() === apiTask.title.toLowerCase(),
         );
         if (!titleExists) {
           updatedTasks.unshift(apiTask); // Add new API tasks at the top
@@ -110,11 +114,17 @@ export default function App() {
 
       setTasks(updatedTasks);
       await saveTasks(updatedTasks);
-      
-      Alert.alert('Sync Complete', `Successfully fetched and synced tasks from JSONPlaceholder API.`);
+
+      Alert.alert(
+        "Sync Complete",
+        `Successfully fetched and synced tasks from JSONPlaceholder API.`,
+      );
     } catch (error) {
       console.error(error);
-      Alert.alert('Sync Error', 'Failed to fetch tasks from JSONPlaceholder API. Please check your internet connection.');
+      Alert.alert(
+        "Sync Error",
+        "Failed to fetch tasks from JSONPlaceholder API. Please check your internet connection.",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -125,24 +135,24 @@ export default function App() {
     try {
       await AsyncStorage.removeItem(STORAGE_KEY);
       setTasks([]);
-      Alert.alert('Reset Successful', 'All task data has been cleared.');
-      setCurrentScreen('list');
+      Alert.alert("Reset Successful", "All task data has been cleared.");
+      setCurrentScreen("list");
     } catch (e) {
       console.error(e);
-      Alert.alert('Error', 'Failed to reset data.');
+      Alert.alert("Error", "Failed to reset data.");
     }
   };
 
   // Seed demo data
   const seedDemoData = async () => {
     await fetchTasksFromAPI();
-    setCurrentScreen('list');
+    setCurrentScreen("list");
   };
 
   // Screen transition handler
   const navigateTo = (screen: ScreenType, task: Task | null = null) => {
     setSelectedTask(task);
-    
+
     // Animate slide-in from right
     slideAnim.setValue(width);
     setCurrentScreen(screen);
@@ -160,7 +170,7 @@ export default function App() {
       duration: 250,
       useNativeDriver: true,
     }).start(() => {
-      setCurrentScreen('list');
+      setCurrentScreen("list");
       setSelectedTask(null);
     });
   };
@@ -168,7 +178,7 @@ export default function App() {
   // Task Actions
   const handleToggleTask = async (id: string) => {
     const updatedTasks = tasks.map((task) =>
-      task.id === id ? { ...task, completed: !task.completed } : task
+      task.id === id ? { ...task, completed: !task.completed } : task,
     );
     // Sort completed to bottom if desired, but keep standard order for simple list
     setTasks(updatedTasks);
@@ -187,7 +197,7 @@ export default function App() {
       description,
       completed: false,
       createdAt: new Date().toISOString(),
-      source: 'local',
+      source: "local",
     };
 
     const updatedTasks = [newTask, ...tasks];
@@ -200,9 +210,7 @@ export default function App() {
     if (!selectedTask) return;
 
     const updatedTasks = tasks.map((task) =>
-      task.id === selectedTask.id
-        ? { ...task, title, description }
-        : task
+      task.id === selectedTask.id ? { ...task, title, description } : task,
     );
 
     setTasks(updatedTasks);
@@ -230,16 +238,16 @@ export default function App() {
             activeFilter={activeFilter}
             onFilterChange={setActiveFilter}
             onToggleTask={handleToggleTask}
-            onSelectTask={(task) => navigateTo('details', task)}
-            onAddTaskPress={() => navigateTo('add')}
-            onSettingsPress={() => navigateTo('settings')}
+            onSelectTask={(task) => navigateTo("details", task)}
+            onAddTaskPress={() => navigateTo("add")}
+            onSettingsPress={() => navigateTo("settings")}
             onFetchTasks={fetchTasksFromAPI}
             isLoading={isLoading}
           />
         </View>
 
         {/* Slide-in Secondary Screen */}
-        {currentScreen !== 'list' && (
+        {currentScreen !== "list" && (
           <Animated.View
             style={[
               StyleSheet.absoluteFill,
@@ -247,25 +255,27 @@ export default function App() {
               { transform: [{ translateX: slideAnim }] },
             ]}
           >
-            {currentScreen === 'details' && selectedTask && (
+            {currentScreen === "details" && selectedTask && (
               <TaskDetailsScreen
                 task={selectedTask}
                 onBack={navigateBack}
-                onEdit={() => navigateTo('edit', selectedTask)}
+                onEdit={() => navigateTo("edit", selectedTask)}
                 onDelete={handleDeleteTask}
                 onToggle={handleToggleTask}
               />
             )}
 
-            {(currentScreen === 'add' || currentScreen === 'edit') && (
+            {(currentScreen === "add" || currentScreen === "edit") && (
               <AddEditTaskScreen
                 task={selectedTask || undefined}
                 onBack={navigateBack}
-                onSave={currentScreen === 'edit' ? handleUpdateTask : handleAddTask}
+                onSave={
+                  currentScreen === "edit" ? handleUpdateTask : handleAddTask
+                }
               />
             )}
 
-            {currentScreen === 'settings' && (
+            {currentScreen === "settings" && (
               <SettingsScreen
                 tasks={tasks}
                 onBack={navigateBack}
@@ -284,15 +294,15 @@ export default function App() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     paddingTop: RNStatusBar.currentHeight || 0,
   },
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
   },
   slidingScreen: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     zIndex: 10,
   },
 });

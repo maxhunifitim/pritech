@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,11 +6,11 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
-} from 'react-native';
-import { Feather, Ionicons } from '@expo/vector-icons';
-import { Task, FilterType } from '../../types';
-import { Theme } from '../../theme';
-import TaskCard from '../components/TaskCard';
+} from "react-native";
+import { Feather, AntDesign } from "@expo/vector-icons";
+import { Task, FilterType } from "../../types";
+import { Theme } from "../../theme";
+import TaskCard from "../components/TaskCard";
 
 interface TaskListScreenProps {
   tasks: Task[];
@@ -40,16 +39,17 @@ export default function TaskListScreen({
   onFetchTasks,
   isLoading,
 }: TaskListScreenProps) {
-  
   // Filter and search logic
-  const filteredTasks = tasks.filter(task => {
-    const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      (task.description && task.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    if (activeFilter === 'pending') {
+  const filteredTasks = tasks.filter((task) => {
+    const matchesSearch =
+      task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (task.description &&
+        task.description.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    if (activeFilter === "pending") {
       return matchesSearch && !task.completed;
     }
-    if (activeFilter === 'completed') {
+    if (activeFilter === "completed") {
       return matchesSearch && task.completed;
     }
     return matchesSearch;
@@ -67,18 +67,23 @@ export default function TaskListScreen({
 
     return (
       <View style={styles.emptyContainer}>
-        <Feather name="clipboard" size={50} color={Theme.colors.textSecondary} style={styles.emptyIcon} />
+        <Feather
+          name="clipboard"
+          size={50}
+          color={Theme.colors.textSecondary}
+          style={styles.emptyIcon}
+        />
         <Text style={styles.emptyTitle}>No Tasks Found</Text>
         <Text style={styles.emptySubtitle}>
-          {searchQuery 
-            ? "Try adjusting your search keywords." 
-            : activeFilter !== 'all' 
-              ? `You don't have any ${activeFilter} tasks.` 
+          {searchQuery
+            ? "Try adjusting your search keywords."
+            : activeFilter !== "all"
+              ? `You don't have any ${activeFilter} tasks.`
               : "Get started by adding a task or syncing from the API."}
         </Text>
-        {!searchQuery && activeFilter === 'all' && (
-          <TouchableOpacity 
-            style={styles.emptyButton} 
+        {!searchQuery && activeFilter === "all" && (
+          <TouchableOpacity
+            style={styles.emptyButton}
             activeOpacity={0.8}
             onPress={onFetchTasks}
           >
@@ -95,12 +100,12 @@ export default function TaskListScreen({
       <View style={styles.header}>
         <View style={styles.headerSpacer} />
         <Text style={styles.headerTitle}>My Tasks</Text>
-        <TouchableOpacity 
-          style={styles.settingsButton} 
+        <TouchableOpacity
+          style={styles.settingsButton}
           activeOpacity={0.8}
           onPress={onSettingsPress}
         >
-          <Ionicons name="settings" size={20} color="#FFFFFF" />
+          <AntDesign name="user" size={20} color="#FFF" />
         </TouchableOpacity>
       </View>
 
@@ -119,7 +124,7 @@ export default function TaskListScreen({
       {/* Filter Row */}
       <View style={styles.filterRow}>
         <View style={styles.chipsContainer}>
-          {(['all', 'pending', 'completed'] as FilterType[]).map((filter) => {
+          {(["all", "pending", "completed"] as FilterType[]).map((filter) => {
             const isActive = activeFilter === filter;
             return (
               <TouchableOpacity
@@ -193,9 +198,9 @@ const styles = StyleSheet.create({
     backgroundColor: Theme.colors.background,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 24,
     paddingTop: 12,
     paddingBottom: 16,
@@ -205,15 +210,15 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     ...Theme.typography.header,
-    textAlign: 'center',
+    textAlign: "center",
   },
   settingsButton: {
     width: 44,
     height: 44,
     borderRadius: 22,
     backgroundColor: Theme.colors.settingsBg,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     ...Theme.shadows.settings,
   },
   searchContainer: {
@@ -228,15 +233,15 @@ const styles = StyleSheet.create({
     ...Theme.typography.input,
   },
   filterRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 24,
     marginBottom: 20,
   },
   chipsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   chip: {
     paddingVertical: 8,
@@ -255,7 +260,7 @@ const styles = StyleSheet.create({
   },
   chipText: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   chipTextActive: {
     color: Theme.colors.chipActiveText,
@@ -269,9 +274,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     borderColor: Theme.colors.chipBorder,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
   },
   listContainer: {
     paddingHorizontal: 24,
@@ -280,8 +285,8 @@ const styles = StyleSheet.create({
   },
   centerContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingTop: 50,
   },
   loadingText: {
@@ -290,8 +295,8 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 32,
     paddingTop: 60,
   },
@@ -306,31 +311,31 @@ const styles = StyleSheet.create({
   },
   emptySubtitle: {
     ...Theme.typography.subtext,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 18,
     marginBottom: 24,
   },
   emptyButton: {
-    backgroundColor: '#000000',
+    backgroundColor: "#000000",
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: Theme.radius.medium,
   },
   emptyButtonText: {
-    color: '#FFFFFF',
-    fontWeight: '600',
+    color: "#FFFFFF",
+    fontWeight: "600",
     fontSize: 14,
   },
   fab: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 30,
     right: 24,
     width: 56,
     height: 56,
     borderRadius: 28,
     backgroundColor: Theme.colors.fabBg,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     ...Theme.shadows.fab,
   },
 });

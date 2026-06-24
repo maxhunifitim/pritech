@@ -6,8 +6,8 @@ import {
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
-  Alert,
 } from 'react-native';
+import { Alert } from '../utils/alert';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import { Task } from '../../types';
 import { Theme } from '../../theme';
